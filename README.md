@@ -1,2 +1,2 @@
-# NeuralLearning
-Neural networks to simulate supervised learning.
+# FACE GAN
+Generative adversarial network for generating faces.
