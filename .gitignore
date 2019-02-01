@@ -1,0 +1,5 @@
+__pycache__/
+*.py[cod]
+img_align_celeba/*
+mnist_imgs/*
+*.ipynb_checkpoints
