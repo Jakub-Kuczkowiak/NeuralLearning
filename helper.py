@@ -6,7 +6,6 @@ import shutil
 import numpy as np
 from PIL import Image
 
-
 def get_image(image_path, mode,
              preprocessing_function=lambda x, **kw: x,
              **preprocessing_kwargs):
@@ -21,7 +20,7 @@ def celeba_preprocessing(image, width, height, **kwargs):
     return image.crop([j, i, j + face_width, i + face_height]).resize([width, height], Image.BILINEAR)
 
 
-def get_batch(image_files, mode, preprocessing_function=lambda x, **kw: x, **preprocessing_kwargs):
+def load(image_files, mode, preprocessing_function=lambda x, **kw: x, **preprocessing_kwargs):
     data_batch = np.array(
         [get_image(sample_file, mode,
                    preprocessing_function,
@@ -32,6 +31,9 @@ def get_batch(image_files, mode, preprocessing_function=lambda x, **kw: x, **pre
 
     return data_batch / 255 - 0.5
 
+def image_for_plot(i):
+    return (((i - i.min()) * 255) / (i.max() - i.min())).astype(np.uint8)
+
 
 def images_grid_for_plot(images, mode, grid_width, grid_height):
     images = np.array(images).reshape(grid_width, grid_height, *images[0].shape)
@@ -41,7 +43,7 @@ def images_grid_for_plot(images, mode, grid_width, grid_height):
 class ImagesDataset:
     __slots__ = ['images', 'loaded_images', 'preprocessing_function', 'preprocessing_kwargs', 'image_mode', 'shape']
     def __init__(self, images_dirs, image_mode, preprocessing_function, **preprocessing_kwargs):
-        self.images = get_batch(images_dirs, image_mode, preprocessing_function, **preprocessing_kwargs)
+        self.images = load(images_dirs, image_mode, preprocessing_function, **preprocessing_kwargs)
         self.preprocessing_function = preprocessing_function
         self.preprocessing_kwargs = preprocessing_kwargs
         self.image_mode = image_mode
@@ -67,7 +69,7 @@ class ImagesDataset:
 #     def get_batches(self, batch_size):
 #         current_index = 0
 #         while current_index + batch_size <= self.shape[0]:
-#             yield get_batch(
+#             yield load(
 #                 self.images_dirs[current_index:current_index + batch_size],
 #                 self.image_mode,
 #                 self.preprocessing_function,
@@ -78,4 +80,4 @@ class ImagesDataset:
 #
 #     def get_random_batch(self, batch_size):
 #         random_images = np.array(self.images_dirs)[np.random.randint(0, self.shape[0], size=batch_size)]
-#         return get_batch(list(random_images), self.image_mode, self.preprocessing_function, **self.preprocessing_kwargs)
+#         return load(list(random_images), self.image_mode, self.preprocessing_function, **self.preprocessing_kwargs)
