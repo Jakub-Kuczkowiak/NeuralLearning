@@ -14,17 +14,10 @@ def get_image(image_path, mode,
 def celeba_preprocessing(image, width, height, **kwargs):
     # Remove most pixels that aren't part of a face
     # taken from medium.com
-    face_width = face_height = 108
-    j = (image.size[0] - face_width) // 2
-    i = (image.size[1] - face_height) // 2
-    return image.crop([j, i, j + face_width, i + face_height]).resize([width, height], Image.BILINEAR)
-
-def preprocessing(image, width, height, face_size, delta_i, delta_j):
-    face_width = face_height = face_size
-    j = (image.size[0] - face_width) // 2 + delta_j
-    i = (image.size[1] - face_height) // 2 + delta_i
-    return image.crop([j, i, j + face_width, i + face_height]).resize([width, height], Image.BILINEAR) 
-
+    face_width = face_height = kwargs.get('face_size', 108)
+    j = (image.size[0] - face_width) // 2 + kwargs.get('delta_j', 0)
+    i = (image.size[1] - face_height) // 2 + kwargs.get('delta_i', 0)
+    return image.rotate(kwargs.get('rotation', 0)).crop([j, i, j + face_width, i + face_height]).resize([width, height], Image.BILINEAR)
 
 def load(image_files, mode, preprocessing_function=lambda x, **kw: x, **preprocessing_kwargs):
     data_batch = np.array(
