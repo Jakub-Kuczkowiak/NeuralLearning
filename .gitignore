@@ -2,6 +2,7 @@ __pycache__/
 *.py[cod]
 img_align_celeba/*
 mnist_imgs/*
+ffhq_imgs_thumbnails/*
 *.ipynb_checkpoints
 
 # all models should be kept on google drive and downloaded with gdown; look at GAN_Viewer.ipynb for example
